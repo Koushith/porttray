@@ -2,6 +2,12 @@
 
 a tiny macOS menu bar app that shows which ports are open, what app is using them, and lets you kill that process right from the tray. no dock icon, no window, just a thing that sits up top.
 
+![PortTray killing ports from the tray](media/demo.gif)
+
+| listening | established |
+| --- | --- |
+| ![listening ports](media/listening.png) | ![established connections](media/established.png) |
+
 ## why i built this
 
 i usually have a few projects running at once, so ports get taken. when i start a server and hit "address already in use", i used to run `lsof -i :3000`, find the pid, `kill -9` it, and repeat for the next port.
@@ -34,7 +40,6 @@ after that it just opens normally.
 - right click a row for Open in Browser (local web ports) and copy PID / port / address / command
 - each row is tagged `local` (loopback only) or `exposed` (reachable from the network), so you can spot something listening on all interfaces at a glance
 - live count badge next to the menu bar icon, always the listening count so the tray does not jump around when you switch tabs
-- global hotkey: Cmd+Shift+P toggles the popover from anywhere
 - Open at Login toggle in the gear menu
 - auto refreshes every few seconds
 
@@ -65,11 +70,16 @@ swift, AppKit `NSStatusItem` + `NSPopover`, SwiftUI for the popover content.
 ```
 Sources/PortTray/
   PortTrayApp.swift    app entry
-  AppDelegate.swift    status item, popover, global hotkey, count badge
+  AppDelegate.swift    status item, popover, count badge
   PortListView.swift   popover UI and rows
   PortStore.swift      observable state and scan mode
   PortScanner.swift    lsof scan and kill
   LoginItem.swift      SMAppService launch at login
   MenuBarIcon.swift    custom template menu bar glyph
   Models.swift         PortEntry, ScanMode, Exposure
+  ShotView.swift       static UI replica used for screenshots
+  ScreenshotMaker.swift  renders media/ via --shots (ImageRenderer)
 ```
+
+the screenshots and the gif in this readme are rendered straight from the real
+SwiftUI views with `PortTray --shots <dir>`, no screen recording involved.

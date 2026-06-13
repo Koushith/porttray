@@ -55,7 +55,7 @@ struct PortListView: View {
             }
         } message: {
             if let entry = confirmKill {
-                Text("PID \(entry.pid) · \(entry.user)\n\(entry.label)")
+                Text(verbatim: "PID \(entry.pid) · \(entry.user)\n\(entry.label)")
             }
         }
     }
@@ -114,7 +114,7 @@ struct PortListView: View {
 
     private var footer: some View {
         HStack(spacing: 10) {
-            Text("\(store.entries.count) \(store.mode.rawValue.lowercased())")
+            Text(verbatim: "\(store.entries.count) \(store.mode.rawValue.lowercased())")
                 .font(.caption)
                 .foregroundStyle(.secondary)
             Spacer()
@@ -154,7 +154,7 @@ struct PortRow: View {
         HStack(spacing: 10) {
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 6) {
-                    Text(":\(entry.port)")
+                    Text(verbatim: ":\(entry.port)")
                         .font(.system(.body, design: .monospaced))
                         .fontWeight(.semibold)
                     Text(entry.command)
@@ -170,7 +170,7 @@ struct PortRow: View {
                     .truncationMode(.middle)
             }
             Spacer(minLength: 8)
-            Text("PID \(entry.pid)")
+            Text(verbatim: "PID \(entry.pid)")
                 .font(.system(.caption, design: .monospaced))
                 .foregroundStyle(.secondary)
             Button("Kill", action: onKill)
