@@ -4,11 +4,9 @@ a tiny macOS menu bar app that shows which ports are open, what app is using the
 
 ## why i built this
 
-on any normal day i have a few projects running at once. a next app on 3000, an api on 8080, a postgres container, some random script i started last week and forgot about, plus whatever vite or storybook picks for itself. half of them i did not even start on purpose.
+i usually have a few projects running at once, so ports get taken. when i start a server and hit "address already in use", i used to run `lsof -i :3000`, find the pid, `kill -9` it, and repeat for the next port.
 
-so the moment i try to boot my actual server, it dies with "address already in use". then begins the ritual: `lsof -i :3000`, squint at the output, find the pid, `kill -9 <pid>`, try again, wrong one, do it again for the next port. every single time.
-
-i got tired of it. i wanted to glance at the menu bar, see everything that is listening, know which app it actually is (not just "node", but which node), and kill it in one click. that is the whole app. that is PortTray.
+PortTray just puts that in the menu bar. it shows what is listening, which app it is, and lets me kill it in one click.
 
 ## download
 
