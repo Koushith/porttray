@@ -1,0 +1,4 @@
+.build/
+PortTray.app/
+*.zip
+.DS_Store
