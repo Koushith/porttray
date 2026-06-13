@@ -29,12 +29,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             rootView: PortListView(store: store, loginItem: loginItem)
         )
 
-        // Keep the badge in sync with the scan results.
-        store.$entries
+        // Keep the badge in sync with the listening-port count. Bound to a
+        // dedicated count so switching modes does not change the tray width.
+        store.$badgeCount
             .receive(on: RunLoop.main)
-            .sink { [weak self] entries in
+            .sink { [weak self] count in
                 MainActor.assumeIsolated {
-                    self?.statusItem.button?.title = entries.isEmpty ? "" : " \(entries.count)"
+                    self?.statusItem.button?.title = count == 0 ? "" : " \(count)"
                 }
             }
             .store(in: &cancellables)
@@ -46,7 +47,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         badgeTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
             MainActor.assumeIsolated {
                 guard let self, !self.popover.isShown else { return }
-                self.store.refresh()
+                self.store.refreshBadge()
             }
         }
     }

@@ -33,6 +33,11 @@ struct PortEntry: Identifiable, Hashable {
     let address: String   // local side, e.g. *:3000, 127.0.0.1:8080, [::1]:5000
     let remote: String?   // peer side for established connections
     let user: String
+    var detail: String?   // full command line from ps, e.g. "node /Users/.../server.js"
+
+    /// A readable label for the responsible process. Falls back to the lsof
+    /// command name when the full command line is unavailable.
+    var label: String { detail?.isEmpty == false ? detail! : command }
 
     var isLoopbackOnly: Bool {
         address.hasPrefix("127.0.0.1:") || address.hasPrefix("[::1]:")

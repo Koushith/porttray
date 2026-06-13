@@ -50,13 +50,12 @@ struct PortListView: View {
             titleVisibility: .visible
         ) {
             if let entry = confirmKill {
-                Button("Kill (SIGTERM)") { store.kill(entry, force: false) }
-                Button("Force Kill (SIGKILL)", role: .destructive) { store.kill(entry, force: true) }
+                Button("Kill", role: .destructive) { store.kill(entry) }
                 Button("Cancel", role: .cancel) {}
             }
         } message: {
             if let entry = confirmKill {
-                Text("PID \(entry.pid) · \(entry.user)")
+                Text("PID \(entry.pid) · \(entry.user)\n\(entry.label)")
             }
         }
     }
@@ -104,11 +103,7 @@ struct PortListView: View {
             ScrollView {
                 LazyVStack(spacing: 0) {
                     ForEach(filtered) { entry in
-                        PortRow(
-                            entry: entry,
-                            onKill: { confirmKill = entry },
-                            onForceKill: { store.kill(entry, force: true) }
-                        )
+                        PortRow(entry: entry, onKill: { confirmKill = entry })
                         Divider()
                     }
                 }
@@ -152,7 +147,6 @@ struct PortListView: View {
 struct PortRow: View {
     let entry: PortEntry
     let onKill: () -> Void
-    let onForceKill: () -> Void
 
     @State private var hovering = false
 
@@ -163,11 +157,15 @@ struct PortRow: View {
                     Text(":\(entry.port)")
                         .font(.system(.body, design: .monospaced))
                         .fontWeight(.semibold)
+                    Text(entry.command)
+                        .font(.callout)
+                        .fontWeight(.medium)
+                        .lineLimit(1)
                     exposureTag
                 }
                 Text(subtitle)
-                    .font(.callout)
-                    .foregroundStyle(.primary)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
                     .lineLimit(1)
                     .truncationMode(.middle)
             }
@@ -184,9 +182,9 @@ struct PortRow: View {
         .background(hovering ? Color.primary.opacity(0.05) : .clear)
         .contentShape(Rectangle())
         .onHover { hovering = $0 }
+        .help(entry.label)
         .contextMenu {
-            Button("Kill (SIGTERM)", action: onKill)
-            Button("Force Kill (SIGKILL)", action: onForceKill)
+            Button("Kill", action: onKill)
             if let url = entry.browserURL {
                 Divider()
                 Button("Open in Browser") { NSWorkspace.shared.open(url) }
@@ -195,14 +193,15 @@ struct PortRow: View {
             Button("Copy PID") { copy("\(entry.pid)") }
             Button("Copy Port") { copy("\(entry.port)") }
             Button("Copy Address") { copy(entry.address) }
+            Button("Copy Command") { copy(entry.label) }
         }
     }
 
     private var subtitle: String {
         if let remote = entry.remote {
-            return "\(entry.command)  →  \(remote)"
+            return "\(entry.label)  \u{2192}  \(remote)"
         }
-        return entry.command
+        return entry.label
     }
 
     @ViewBuilder
