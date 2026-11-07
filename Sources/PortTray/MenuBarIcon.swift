@@ -1,25 +1,30 @@
 import AppKit
 
-/// A custom monochrome menu bar glyph: a panel with three port holes.
+/// Menu bar glyph from the redesign: a socket panel with a port opening.
 /// Rendered as a template image so it tints correctly in light/dark menu bars.
 enum MenuBarIcon {
     static let image: NSImage = {
-        let size = NSSize(width: 18, height: 18)
-        let image = NSImage(size: size, flipped: false) { _ in
-            let outer = NSRect(x: 1.5, y: 4, width: 15, height: 10)
-            let panel = NSBezierPath(roundedRect: outer, xRadius: 2.5, yRadius: 2.5)
-            panel.lineWidth = 1.4
+        let image = NSImage(size: NSSize(width: 16, height: 16), flipped: true) { _ in
             NSColor.black.setStroke()
-            panel.stroke()
 
-            NSColor.black.setFill()
-            let r: CGFloat = 1.35
-            for i in 0..<3 {
-                let cx = outer.minX + 4 + CGFloat(i) * 3.6
-                let dot = NSBezierPath(ovalIn: NSRect(x: cx - r, y: outer.midY - r,
-                                                      width: r * 2, height: r * 2))
-                dot.fill()
-            }
+            let body = NSBezierPath(roundedRect: NSRect(x: 2, y: 3, width: 12, height: 10),
+                                    xRadius: 2, yRadius: 2)
+            body.lineWidth = 1.5
+            body.lineJoinStyle = .round
+            body.stroke()
+
+            let port = NSBezierPath()
+            port.move(to: NSPoint(x: 5.5, y: 13))
+            port.line(to: NSPoint(x: 5.5, y: 9.5))
+            port.line(to: NSPoint(x: 10.5, y: 9.5))
+            port.line(to: NSPoint(x: 10.5, y: 13))
+            port.move(to: NSPoint(x: 7, y: 9.5))
+            port.line(to: NSPoint(x: 7, y: 8))
+            port.line(to: NSPoint(x: 9, y: 8))
+            port.line(to: NSPoint(x: 9, y: 9.5))
+            port.lineWidth = 1.5
+            port.lineJoinStyle = .round
+            port.stroke()
             return true
         }
         image.isTemplate = true
